@@ -32,36 +32,41 @@ var ex = new Vue({
 		queryForm: queryForm,
 		tableData: tableData,
 		loading: false,
-		rules: rules
+		rules: rules,
+		currentPage: 1
 	},
 	methods: {
 		onSubmit: function () {
 			this.$refs['form'].validate((valid) => {
 				if (valid) {
-					axios.post(url, form)
+					axios.post(url, ex.form)
 						.then(function (response) {
-							console.log(response);
+							ex.$message({ message: '保存成功', type: 'success' })
+							console.log(response)
+							ex.$refs['form'].resetFields()
+							ex.onQuery()
 						})
 						.catch(function (error) {
-							console.log(response);
+							console.log(error)
 						})
 				} else {
-					console.log('error submit!!');
-					return false;
+					console.log('error submit!!')
+					return false
 				}
 			});
 		},
 		onQuery: function () {
-			axios.get(url, queryForm)
+			axios.get(url + "/query", { params: queryForm })
 				.then(function (response) {
 					ex.tableData = response.data
 				})
 				.catch(function (error) {
-					console.log(error);
+					console.log(error)
 				})
 		},
 		resetForm(formName) {
-			this.$refs[formName].resetFields();
+			this.$refs[formName].resetFields()
+			delete this.form.id
 		},
 		removeColumn(item) {
 			var index = this.form.columns.indexOf(item)
@@ -77,8 +82,37 @@ var ex = new Vue({
 			if (!row.columns) {
 				row.columns = [{ key: '', name: '', nameZw: '', comment: '', type: '', isNull: "1" }]
 			}
-			// ex.form = Object.assign({}, row)	// columns 可能有问题
 			ex.form = JSON.parse(JSON.stringify(row))
+		},
+		handleClick(row) {
+			this.$confirm('此操作无法恢复, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				axios.delete(url + '/' + row.id)
+					.then(() => {
+						ex.$message({
+							message: '删除成功',
+							type: 'success'
+						});
+						ex.onQuery()
+					})
+					.catch(error => {
+						this.$message.error('操作失败，' + error);
+					})
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '已取消删除'
+				});
+			});
+		},
+		handleSizeChange(val) {
+			console.log(`每页 ${val} 条`);
+		},
+		handleCurrentChange(val) {
+			console.log(`当前页: ${val}`);
 		}
 	}
 })

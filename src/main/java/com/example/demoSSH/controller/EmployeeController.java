@@ -25,12 +25,12 @@ public class EmployeeController {
 		this.repository = repository;
 	}
 	
-	 @GetMapping("/hello")
-	    public String hello(Model model) {
-	        Map<String, Object> map = model.asMap();
-	        System.out.println(map);
-	        return "hello controller advice";
-	    }
+	@GetMapping("/hello")
+	public String hello(Model model) {
+		Map<String, Object> map = model.asMap();
+		System.out.println(map);
+		return "hello controller advice";
+	}
 
 	@GetMapping("/employees")
 	List<Employee> all() {
@@ -59,8 +59,8 @@ public class EmployeeController {
 		});
 	}
 	
-	  @DeleteMapping("/employees/{id}")
-	  void deleteEmployee(@PathVariable Long id) {
-	    repository.deleteById(id);
-	  }
+	@DeleteMapping("/employees/{id}")
+	void deleteEmployee(@PathVariable Long id) {
+		repository.deleteById(id);
+	}
 }

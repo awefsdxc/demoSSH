@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,10 +35,19 @@ public class DataSourceController {
 		return dao.save(newDatasource);
 	}
 	
+	@PutMapping("/datasource/{id}")
+	Datasource updateDS(@RequestBody Datasource datasource, @PathVariable Long id) {
+		datasource.setId(id);
+		return dao.save(datasource);
+	}
+	
 	@DeleteMapping("/datasource/{id}")
 	void deleteDatasource(@PathVariable Long id) {
 		dao.deleteById(id);
 	}
 	
-	
+	@GetMapping("datasource/query")
+	List<Datasource> query(String systemName, String tableName) {
+		return dao.findBySystemNameAndTableNameLike(systemName, tableName);
+	}
 }

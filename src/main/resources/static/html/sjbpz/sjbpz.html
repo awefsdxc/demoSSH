@@ -1,125 +1,155 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<!-- import CSS -->
-<link rel="stylesheet" href="/css/element-ui.css">
-<link rel="stylesheet" href="./sjbpz.css">
+	<meta charset="UTF-8">
+	<!-- import CSS -->
+	<link rel="stylesheet" href="/css/element-ui.css">
+	<link rel="stylesheet" href="./sjbpz.css">
 </head>
+
 <body>
-<div id="app" v-loading="loading">
-	<el-container>
-		<el-header>数据表配置</el-header>
-		
-		<el-main>
-			<el-row type="flex" class="row-bg" justify="start">
-				<el-col :span="2"><el-button type="primary" @click="onSubmit">保存</el-button></el-col>
-			    <el-col :span="2"><el-button @click="resetForm('form')">取消</el-button></el-col>
-		    </el-row>
-			<el-row type="flex" class="row-bg" justify="center">
-			<!-- 数据表表单 -->
-			<el-col :span="18"><div class="grid-content bg-purple-light">
-				<el-form ref="form" :model="form" label-width="80px" :rules="rules">
-					<el-row>
-						<el-col :span="12">
-							<el-form-item label="应用系统" prop="systemName" >
-			  					<el-select v-model="form.systemName" placeholder="请选择应用系统" class="widthFull">
-							    	<el-option label="系统一" value="XT1"></el-option>
-							      	<el-option label="系统二" value="XT2"></el-option>
-							    </el-select>
-			  				</el-form-item>
-	  					</el-col>
-	  					<el-col :span="12">
-			  				<el-form-item label="表名" prop="tableName"  >
-			  					 <el-input v-model="form.tableName"></el-input>
-			  				</el-form-item>
-		  				</el-col>
-	 				</el-row>
-	 				
-	 				<el-row>
-	 					<el-col :span="12">
-			  				<el-form-item label="中文表名" prop="tableNameZw">
-			  					 <el-input v-model="form.tableNameZw"></el-input>
-			  				</el-form-item>
-		  				</el-col>
-						<el-col :span="12">
-							<el-form-item label="数据类型" prop="dataType">
-			  					<el-select v-model="form.dataType" class="widthFull">
-			  						<el-option label="数据表" value="1"></el-option>
-			  						<el-option label="视图" value="2"></el-option>
-							    	<el-option label="存储过程" value="3"></el-option>
-							    </el-select>
-			  				</el-form-item>
-	  					</el-col>
-	 				</el-row>
-	 				
-	 				<el-form-item label="备注" prop="datasourceDesc">
-					    <el-input type="textarea" v-model="form.datasourceDesc"></el-input>
-				    </el-form-item>
-				    
-				    <el-form-item>
-				    	<el-row :gutter="10">
-					    	<el-col :span="3">名称</el-col>
-					    	<el-col :span="3">中文名</el-col>
-					    	<el-col :span="3">注释</el-col>
-					    	<el-col :span="3">字段</el-col>
-					    	<el-col :span="3">是否为空</el-col>
-				    	</el-row>
-				    </el-form-item>
-				    <el-form-item 
-				    	v-for="(column, index) in form.columns"
-					    :key="column.key"
-					    :prop="'columns.' + index + '.value'">
-					    <el-row :gutter="10">
-					    	<el-col :span="3"><el-input v-model="column.name"></el-input></el-col>
-					    	<el-col :span="3"><el-input v-model="column.nameZw"></el-input></el-col>
-					    	<el-col :span="3"><el-input v-model="column.comment"></el-input></el-col>
-					    	<el-col :span="3"><el-input v-model="column.type"></el-input></el-col>
-					    	<el-col :span="3">
-					    		<el-select v-model="column.isNull" >
-					    			<el-option label="是" value=1></el-option>
-					    			<el-option label="否" value=0></el-option>
-				    			</el-select>
-			    			</el-col>
-					    	<el-button @click.prevent="addColumn(column)">新增</el-button>
-					    	<el-button @click.prevent="removeColumn(column)">删除</el-button>
-					    </el-row>
-				    </el-form-item>
-	 			</el-form>
- 			</div></el-col></el-row>
- 			<!-- 查询表单 -->
- 			<el-row type="flex" class="row-bg" justify="center"><el-col :span="24">
- 				<el-form :inline="true" :model="queryForm" class="demo-form-inline">
-	 				<el-form-item label="表名">
-	 					<el-input v-model="queryForm.tableName"></el-input>
- 					</el-form-item>
- 					<el-form-item label="应用系统">
-	  					<el-select v-model="queryForm.systemName" placeholder="请选择应用系统" >
-					    	<el-option label="系统一" value="XT1"></el-option>
-					      	<el-option label="系统二" value="XT2"></el-option>
-					    </el-select>
-	  				</el-form-item>
-	  				<el-form-item>
-	  					<el-button type="primary" @click="onQuery">查询</el-button>
-  					</el-form-item>
-				</el-form>
- 			</el-col></el-row>
- 			<!-- 数据表格 -->
- 			<el-table :data="tableData" border stripe highlight-current-row @row-dblclick="onTableDbl" style="width: 100%">
-			    <el-table-column prop="systemName" label="应用系统"></el-table-column>
-			    <el-table-column prop="dataType" label="数据类型"></el-table-column>
-			    <el-table-column prop="tableNameZw" label="中文名称"></el-table-column>
-			    <el-table-column prop="tableName" label="英文名称"></el-table-column>
-			    <el-table-column prop="department" label="专业（部门）"></el-table-column>
-			    <el-table-column prop="datasourceDesc" label="描述"></el-table-column>
-			    <el-table-column prop="cz" label="操作"></el-table-column>
-			</el-table>
-		</el-main>
-	</el-container>
-</div>
+	<div id="app" v-loading="loading">
+		<el-container>
+			<el-header>数据表配置</el-header>
+
+			<el-main>
+				<el-row type="flex" class="row-bg" justify="start">
+					<el-col :span="2">
+						<el-button type="primary" @click="onSubmit">保存</el-button>
+					</el-col>
+					<el-col :span="2">
+						<el-button @click="resetForm('form')">取消</el-button>
+					</el-col>
+				</el-row>
+				<el-row type="flex" class="row-bg" justify="center">
+					<!-- 数据表表单 -->
+					<el-col :span="18">
+						<div class="grid-content bg-purple-light">
+							<el-form ref="form" :model="form" label-width="80px" :rules="rules">
+								<el-row>
+									<el-col :span="12">
+										<el-form-item label="应用系统" prop="systemName">
+											<el-select v-model="form.systemName" placeholder="请选择应用系统"
+												class="widthFull">
+												<el-option label="系统一" value="XT1"></el-option>
+												<el-option label="系统二" value="XT2"></el-option>
+											</el-select>
+										</el-form-item>
+									</el-col>
+									<el-col :span="12">
+										<el-form-item label="表名" prop="tableName">
+											<el-input v-model="form.tableName"></el-input>
+										</el-form-item>
+									</el-col>
+								</el-row>
+
+								<el-row>
+									<el-col :span="12">
+										<el-form-item label="中文表名" prop="tableNameZw">
+											<el-input v-model="form.tableNameZw"></el-input>
+										</el-form-item>
+									</el-col>
+									<el-col :span="12">
+										<el-form-item label="数据类型" prop="dataType">
+											<el-select v-model="form.dataType" class="widthFull">
+												<el-option label="数据表" value="1"></el-option>
+												<el-option label="视图" value="2"></el-option>
+												<el-option label="存储过程" value="3"></el-option>
+											</el-select>
+										</el-form-item>
+									</el-col>
+								</el-row>
+
+								<el-form-item label="备注" prop="datasourceDesc">
+									<el-input type="textarea" v-model="form.datasourceDesc"></el-input>
+								</el-form-item>
+
+								<el-form-item>
+									<el-row :gutter="10">
+										<el-col :span="3">名称</el-col>
+										<el-col :span="3">中文名</el-col>
+										<el-col :span="3">注释</el-col>
+										<el-col :span="3">字段</el-col>
+										<el-col :span="3">是否为空</el-col>
+									</el-row>
+								</el-form-item>
+								<el-form-item v-for="(column, index) in form.columns" :key="column.key"
+									:prop="'columns.' + index + '.value'">
+									<el-row :gutter="10">
+										<el-col :span="3">
+											<el-input v-model="column.name"></el-input>
+										</el-col>
+										<el-col :span="3">
+											<el-input v-model="column.nameZw"></el-input>
+										</el-col>
+										<el-col :span="3">
+											<el-input v-model="column.comment"></el-input>
+										</el-col>
+										<el-col :span="3">
+											<el-input v-model="column.type"></el-input>
+										</el-col>
+										<el-col :span="3">
+											<el-select v-model="column.isNull">
+												<el-option label="是" value=1></el-option>
+												<el-option label="否" value=0></el-option>
+											</el-select>
+										</el-col>
+										<el-button @click.prevent="addColumn(column)">新增</el-button>
+										<el-button @click.prevent="removeColumn(column)">删除</el-button>
+									</el-row>
+								</el-form-item>
+							</el-form>
+						</div>
+					</el-col>
+				</el-row>
+
+				<!-- 查询表单 -->
+				<el-row type="flex" class="row-bg" justify="center">
+					<el-col :span="24">
+						<el-form :inline="true" :model="queryForm" class="demo-form-inline">
+							<el-form-item label="表名">
+								<el-input v-model="queryForm.tableName"></el-input>
+							</el-form-item>
+							<el-form-item label="应用系统">
+								<el-select v-model="queryForm.systemName" placeholder="请选择应用系统">
+									<el-option label="系统一" value="XT1"></el-option>
+									<el-option label="系统二" value="XT2"></el-option>
+								</el-select>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="primary" @click="onQuery" icon="el-icon-search">查询</el-button>
+							</el-form-item>
+						</el-form>
+					</el-col>
+				</el-row>
+				<!-- 数据表格 -->
+				<el-table :data="tableData" border stripe highlight-current-row @row-dblclick="onTableDbl"
+					style="width: 100%">
+					<el-table-column prop="systemName" label="应用系统"></el-table-column>
+					<el-table-column prop="dataType" label="数据类型"></el-table-column>
+					<el-table-column prop="tableNameZw" label="中文名称"></el-table-column>
+					<el-table-column prop="tableName" label="英文名称"></el-table-column>
+					<el-table-column prop="department" label="专业（部门）"></el-table-column>
+					<el-table-column prop="datasourceDesc" label="描述"></el-table-column>
+					<el-table-column fixed="right" label="操作" width="100">
+						<template slot-scope="scope">
+							<el-button @click="handleClick(scope.row)" type="text" size="middle">删除</el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+				<!-- 分页 -->
+				<el-pagination layout="total, sizes, prev, pager, next, jumper" :hide-on-single-page="true"
+					:current-page="currentPage" :page-sizes="[10, 20, 50]" :page-size="100" :total="5"
+					@size-change="handleSizeChange" @current-change="handleCurrentChange">
+				</el-pagination>
+			</el-main>
+		</el-container>
+	</div>
 </body>
 <script src="/js/vue.js"></script>
 <script src="/js/element.js"></script>
 <script src="/js/axios.min.js"></script>
 <script src="./sjbpz.js"></script>
+
 </html>

@@ -1,9 +1,14 @@
 package com.example.demoSSH.entity;
 
+import java.util.Arrays;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 
 /**
  * 数据源实体
@@ -27,7 +32,9 @@ public class Datasource {
 	// 描述
 	private String datasourceDesc;
 	
-	@Transient
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "datasourceId")
+	@OrderColumn
 	private Column[] columns;
 	
 	public Datasource() {
@@ -35,7 +42,7 @@ public class Datasource {
 	}
 
 	public Datasource(long id, String systemName, String dataType, String tableName, String tableNameZw,
-			String department, String datasourceDesc) {
+			String department, String datasourceDesc, Column[] columns) {
 		super();
 		this.id = id;
 		this.systemName = systemName;
@@ -44,6 +51,7 @@ public class Datasource {
 		this.tableNameZw = tableNameZw;
 		this.department = department;
 		this.datasourceDesc = datasourceDesc;
+		this.columns = columns;
 	}
 
 	public long getId() {
@@ -102,11 +110,19 @@ public class Datasource {
 		this.datasourceDesc = datasourceDesc;
 	}
 
+	public Column[] getColumns() {
+		return columns;
+	}
+
+	public void setColumns(Column[] columns) {
+		this.columns = columns;
+	}
+
 	@Override
 	public String toString() {
 		return "Datasource [id=" + id + ", systemName=" + systemName + ", dataType=" + dataType + ", tableName="
 				+ tableName + ", tableNameZw=" + tableNameZw + ", department=" + department + ", datasourceDesc="
-				+ datasourceDesc + "]";
+				+ datasourceDesc + ", columns=" + Arrays.toString(columns) + "]";
 	}
 	
 }
