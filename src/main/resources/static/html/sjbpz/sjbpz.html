@@ -74,6 +74,7 @@
 										<el-col :span="3">是否为空</el-col>
 									</el-row>
 								</el-form-item>
+
 								<el-form-item v-for="(column, index) in form.columns" :key="column.key"
 									:prop="'columns.' + index + '.value'">
 									<el-row :gutter="10">
@@ -127,7 +128,7 @@
 				<el-table :data="tableData" border stripe highlight-current-row @row-dblclick="onTableDbl"
 					style="width: 100%">
 					<el-table-column prop="systemName" label="应用系统"></el-table-column>
-					<el-table-column prop="dataType" label="数据类型"></el-table-column>
+					<el-table-column prop="dataType" label="数据类型" :formatter="dataTypeFormat"></el-table-column>
 					<el-table-column prop="tableNameZw" label="中文名称"></el-table-column>
 					<el-table-column prop="tableName" label="英文名称"></el-table-column>
 					<el-table-column prop="department" label="专业（部门）"></el-table-column>
@@ -139,8 +140,8 @@
 					</el-table-column>
 				</el-table>
 				<!-- 分页 -->
-				<el-pagination layout="total, sizes, prev, pager, next, jumper" :hide-on-single-page="true"
-					:current-page="currentPage" :page-sizes="[10, 20, 50]" :page-size="100" :total="5"
+				<el-pagination layout="total, sizes, prev, pager, next, jumper" :current-page.sync="pagination.page"
+					:page-sizes="[5, 10, 20]" :page-size.sync="pagination.size" :total="pagination.total"
 					@size-change="handleSizeChange" @current-change="handleCurrentChange">
 				</el-pagination>
 			</el-main>
@@ -150,6 +151,7 @@
 <script src="/js/vue.js"></script>
 <script src="/js/element.js"></script>
 <script src="/js/axios.min.js"></script>
+<script src="/js/util/tableUtils.js"></script>
 <script src="./sjbpz.js"></script>
 
 </html>

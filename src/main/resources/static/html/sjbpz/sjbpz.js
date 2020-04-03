@@ -1,4 +1,10 @@
-var url = '/datasource';
+const url = '/datasource';
+const dataTypeList = [
+	{ key: '1', value: '数据表' },
+	{ key: '2', value: '视图' },
+	{ key: '3', value: '存储过程' },
+]
+
 // 数据表表单
 var form = {
 	tableName: '',
@@ -24,6 +30,12 @@ var queryForm = {
 }
 // 数据表格
 var tableData = []
+// 分页
+var pagination = {
+	page: 1,
+	size: 5,
+	total: 0
+}
 
 var ex = new Vue({
 	el: '#app',
@@ -33,7 +45,7 @@ var ex = new Vue({
 		tableData: tableData,
 		loading: false,
 		rules: rules,
-		currentPage: 1
+		pagination: pagination,
 	},
 	methods: {
 		onSubmit: function () {
@@ -56,9 +68,10 @@ var ex = new Vue({
 			});
 		},
 		onQuery: function () {
-			axios.get(url + "/query", { params: queryForm })
+			axios.get(url + "/query/page", { params: Object.assign({}, queryForm, { page: pagination.page - 1, size: pagination.size }) })
 				.then(function (response) {
-					ex.tableData = response.data
+					ex.tableData = response.data.content
+					pagination.total = response.data.totalElements
 				})
 				.catch(function (error) {
 					console.log(error)
@@ -66,6 +79,7 @@ var ex = new Vue({
 		},
 		resetForm(formName) {
 			this.$refs[formName].resetFields()
+			this.form.columns = []
 			delete this.form.id
 		},
 		removeColumn(item) {
@@ -109,10 +123,15 @@ var ex = new Vue({
 			});
 		},
 		handleSizeChange(val) {
-			console.log(`每页 ${val} 条`);
+			console.log(`每页 ${val} 条`)
+			this.onQuery()
 		},
 		handleCurrentChange(val) {
 			console.log(`当前页: ${val}`);
+			this.onQuery()
+		},
+		dataTypeFormat(row, column, cellValue, index) {
+			return tableUtils.getDataName({ dataList: dataTypeList, value: 'key', label: 'value', data: cellValue })
 		}
 	}
 })
