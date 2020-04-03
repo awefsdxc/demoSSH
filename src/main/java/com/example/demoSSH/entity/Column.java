@@ -24,15 +24,15 @@ public class Column {
 	// 注释
 	private String comment;
 	// 字段类型
-	private int type;
+	private String type;
 	// 是否为空
-	private int isNull;
+	private String isNull;
 
 	public Column() {
 		super();
 	}
 
-	public Column(Long id, Long datasourceId, String name, String nameZw, String comment, int type, int isNull) {
+	public Column(Long id, Long datasourceId, String name, String nameZw, String comment, String type, String isNull) {
 		super();
 		this.id = id;
 		this.datasourceId = datasourceId;
@@ -75,19 +75,19 @@ public class Column {
 		this.comment = comment;
 	}
 
-	public int getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(int type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 
-	public int getIsNull() {
+	public String getIsNull() {
 		return isNull;
 	}
 
-	public void setIsNull(int isNull) {
+	public void setIsNull(String isNull) {
 		this.isNull = isNull;
 	}
 

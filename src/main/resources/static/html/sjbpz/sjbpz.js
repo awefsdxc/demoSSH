@@ -4,6 +4,7 @@ const dataTypeList = [
 	{ key: '2', value: '视图' },
 	{ key: '3', value: '存储过程' },
 ]
+const initColumns = [{ key: '', name: '', nameZw: '', comment: '', type: '', isNull: "1" }]
 
 // 数据表表单
 var form = {
@@ -12,10 +13,9 @@ var form = {
 	tableNameZw: '',
 	dataType: '',
 	datasourceDesc: '',
-	columns: [
-		{ key: '', name: '', nameZw: '', comment: '', type: '', isNull: "1" }
-	]
+	columns: JSON.parse(JSON.stringify(initColumns))
 }
+
 // 表单校验 
 var rules = {
 	systemName: [{ required: true, message: '请选择应用系统', trigger: 'change' }],
@@ -55,7 +55,7 @@ var ex = new Vue({
 						.then(function (response) {
 							ex.$message({ message: '保存成功', type: 'success' })
 							console.log(response)
-							ex.$refs['form'].resetFields()
+							ex.resetForm()
 							ex.onQuery()
 						})
 						.catch(function (error) {
@@ -77,9 +77,9 @@ var ex = new Vue({
 					console.log(error)
 				})
 		},
-		resetForm(formName) {
-			this.$refs[formName].resetFields()
-			this.form.columns = []
+		resetForm() {
+			this.$refs['form'].resetFields()
+			this.form.columns = JSON.parse(JSON.stringify(initColumns))
 			delete this.form.id
 		},
 		removeColumn(item) {
