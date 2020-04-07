@@ -20,7 +20,10 @@ var form = {
 var rules = {
 	systemName: [{ required: true, message: '请选择应用系统', trigger: 'change' }],
 	tableName: [{ required: true, message: '请输入表名', trigger: 'change' }],
-	tableNameZw: [{ required: true, message: '请输入中文表名', trigger: 'change' }],
+	tableNameZw: [
+		{ required: true, message: '请输入中文表名', trigger: 'change' },
+		{ min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' },
+	],
 	dataType: [{ required: true, message: '请选择数据类型', trigger: 'change' }]
 }
 // 查询表单
